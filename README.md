@@ -1,5 +1,8 @@
 # LearnGrounded AI
 
+# Team Solo
+# Team leader jain khusi sushilkumar
+
 A source-grounded study companion for **Multimodal AI Hackathon 2026, Track D: Personalized Tutoring & Adaptive Learning**.
 
 It ingests textbooks (PDF), slide decks (PPTX) and lecture captions (VTT/SRT), builds a source-cited knowledge base, tutors the student only from that material, runs adaptive quizzes, and tracks mastery per topic.
@@ -14,6 +17,8 @@ python app.py                            # then open http://127.0.0.1:5000
 ```
 
 Without PyMuPDF, the app falls back to `pypdf` for reading PDFs and `matplotlib` for writing the sample PDF, so it still runs.
+
+# This project was built with the help of an AI assistant (Claude). I chose the programming languages for each part of the project (Python for the backend and AI logic, HTML/CSS and JavaScript for the pages , SQLite for saving progress .I can explain how each part works, and the dashboard charts are drawn in app.py with matplotlib.
 
 **Demo flow (about 3 minutes):**
 1. **Knowledge base:** click *Load sample course*. It ingests 13 source units across a textbook PDF, a slide deck and a lecture caption file, and detects 6 topics.
@@ -69,7 +74,6 @@ python app.py
 - **Diagram understanding:** figure pages are detected and listed, but the content of diagrams is not read. The required visual pipeline (for example, Gemini reading slide images) is future work.
 - **Video:** the prototype uses caption files (`.vtt` / `.srt`). It does not transcribe audio. Whisper-style transcription is out of scope for the offline demo.
 - **Retrieval:** TF-IDF with NumPy, not embeddings. Paraphrased questions match less well than exact wording does.
-- **Answer generation:** without a Gemini key, the tutor returns the most relevant sentences with citations, not a rewritten explanation.
 - **Metrics:** the RAGAS-style metrics are local proxies, not official RAGAS scores. The test set is generated from the sample course. The 20-question test set and the 25-question simulation runs are small, so treat the numbers as indicative.
 - **Simulation:** students are simulated, not real. Adaptive policy reduces repeats to zero and helps most for the struggling profile. For fast and average learners, random selection gains slightly more mastery at the cost of repeats. The report shows this.
 - **Not implemented (optional items):** course flow map, revision material, study schedule, Hindi or mixed-language interaction, audio tutoring.
