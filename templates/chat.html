@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="chatwrap">
+  <div class="chatpane card">
+    <div id="messages" class="messages">
+      {% if not history %}
+        <div class="msg tutor">
+          <div class="bubble">Hi, I am your tutor. Ask me about anything in your uploaded material.
+            I will cite the page, slide, or timestamp for every answer, and I will tell you when a topic is not covered.</div>
+        </div>
+      {% endif %}
+      {% for m in history %}
+        <div class="msg {{ 'me' if m.role=='student' else 'tutor' }}">
+          <div class="bubble">
+            {{ m.content }}
+            {% if m.citations %}
+              <div class="cites">
+                {% for c in m.citations %}
+                  <button class="cite" data-id="{{ c.chunk_id }}">{{ c.source }} · {{ c.location }}</button>
+                {% endfor %}
+              </div>
+            {% endif %}
+            {% if m.mode == 'refused' %}<span class="flag">Not in your material</span>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="toolbar">
+      <label>Language
+        <select id="langSelect">
+          <option value="en" selected>English</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+        </select>
+      </label>
+      <label>Answer from
+        <select id="docSelect">
+          <option value="" selected>All my files</option>
+          {% for d in docs %}<option value="{{ d.name }}">{{ d.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="readAloud"> Read answers aloud</label>
+      <span id="voiceStatus" class="muted small"></span>
+    </div>
+    <form id="chatForm" class="composer">
+      <button type="button" id="micBtn" class="mic" title="Speak your question">🎤</button>
+      <input id="chatInput" placeholder="Ask a question about your course material..." autocomplete="off">
+      <button class="primary" type="submit">Ask</button>
+    </form>
+  </div>
+
+  <aside class="card side">
+    <h3>Try asking</h3>
+    <div class="suggest">
+      <button class="sugg">Explain how photosynthesis works</button>
+      <button class="sugg">What is the difference between mitosis and meiosis?</button>
+      <button class="sugg">What are the main stages of the water cycle?</button>
+      <button class="sugg">What is the recipe for chocolate cake?</button>
+    </div>
+    <p class="muted small">The last one is not in the sample course, so the tutor should refuse it.</p>
+    <h3>Topics in your material</h3>
+    <div class="chips">
+      {% for t in topics[:20] %}<span class="chip soft">{{ t }}</span>{% else %}<span class="muted">Upload material first.</span>{% endfor %}
+    </div>
+  </aside>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>initChat(); initVoice();</script>
+{% endblock %}

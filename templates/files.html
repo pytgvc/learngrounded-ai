@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Your uploaded files</h2>
+  <p class="muted small">Open any file to see the original. Files are stored on your computer only.</p>
+  {% if items %}
+    <table class="metrics">
+      <tr><th>File</th><th>Size</th><th></th></tr>
+      {% for f in items %}
+      <tr>
+        <td>{{ f.name }}</td><td>{{ f.kb }} KB</td>
+        <td><a href="{{ f.url }}" target="_blank">Open</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p class="muted">No files yet. Upload them on the Knowledge base page.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Figures and images</h2>
+  {% if not llm_ready %}<p class="muted small">Set GEMINI_API_KEY to get descriptions for waiting figures.</p>{% endif %}
+  {% if figs %}
+    <div class="figgrid">
+    {% for f in figs %}
+      <div class="figcard">
+        <a href="/figure/{{ f.id }}" target="_blank"><img src="/figure/{{ f.id }}" alt="{{ f.location }}"></a>
+        <div><b>{{ f.source }}</b> · {{ f.location }}</div>
+        {% if f.status == 'done' %}
+          <p class="small">{{ f.description }}</p>
+        {% else %}
+          <p class="small muted">Waiting for description.</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">No figures found yet. Upload a PDF or PPTX that contains diagrams or images.</p>
+  {% endif %}
+</section>
+{% endblock %}

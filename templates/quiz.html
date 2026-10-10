@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid2">
+  <div class="card">
+    <h2>Set up an assessment</h2>
+    <p class="muted">Pick a scope, then a question mix. Each question is tagged with its topic, source, and difficulty.</p>
+    <label class="field">Scope
+      <select id="scope">
+        <option value="">Whole course</option>
+        {% for t in topics[:30] %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="field">Questions
+      <select id="count"><option>3</option><option selected>5</option><option>8</option></select>
+    </label>
+    <div class="field">
+      <span>Question types</span>
+      <label class="check"><input type="checkbox" class="qt" value="mcq" checked> Multiple choice</label>
+      <label class="check"><input type="checkbox" class="qt" value="short" checked> Short answer</label>
+      <label class="check"><input type="checkbox" class="qt" value="numerical" checked> Numerical</label>
+    </div>
+    <div class="row">
+      <button class="primary" id="startQuiz">Start quiz</button>
+      <button id="startDiag">New student: diagnostic</button>
+    </div>
+    <p id="quizNote" class="muted small"></p>
+  </div>
+
+  <div class="card">
+    <h2>Your session</h2>
+    <div id="quizArea" class="quizarea">
+      <p class="muted">Start a quiz to see questions here. Answers are graded immediately, with cited feedback.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>initQuiz();</script>
+{% endblock %}

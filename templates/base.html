@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LearnGrounded AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">LG</span>
+    <div><strong>LearnGrounded AI</strong><small>Source-grounded study companion</small></div>
+  </div>
+  <nav>
+    <a href="/" class="{{ 'on' if active=='home' }}">Knowledge base</a>
+    <a href="/chat" class="{{ 'on' if active=='chat' }}">Tutor</a>
+    <a href="/quiz" class="{{ 'on' if active=='quiz' }}">Quiz</a>
+    <a href="/dashboard" class="{{ 'on' if active=='dashboard' }}">Dashboard</a>
+    <a href="/evaluate" class="{{ 'on' if active=='evaluate' }}">Evaluation</a>
+    <a href="/files" class="{{ 'on' if active=='files' }}">Files &amp; figures</a>
+  </nav>
+  {% if session.get('user_id') %}
+  <div class="userbox">
+    <span>Hi, {{ session.get('name') }}</span>
+    <form method="post" action="/logout">
+      <button class="ghost" type="submit">Log out</button>
+    </form>
+  </div>
+  {% endif %}
+</header>
+<main>
+  {% block content %}{% endblock %}
+</main>
+<div id="toast" class="toast" hidden></div>
+<div id="viewer" class="viewer" hidden>
+  <div class="viewer-card">
+    <div class="viewer-head">
+      <div><strong id="vw-title"></strong><small id="vw-loc"></small></div>
+      <button class="ghost" onclick="closeViewer()">Close</button>
+    </div>
+    <img id="vw-img" class="viewer-img" alt="" hidden>
+    <div class="viewer-body" id="vw-body"></div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

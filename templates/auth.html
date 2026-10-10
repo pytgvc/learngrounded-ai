@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'Sign up' if mode == 'signup' else 'Log in' }} · LearnGrounded AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body">
+<main class="auth-wrap">
+  <div class="auth-card">
+
+    <section class="auth-brand">
+      <span class="logo big">LG</span>
+      <h1>LearnGrounded AI</h1>
+      <p class="auth-tagline">Your personal AI learning companion</p>
+      <p class="auth-sub">Upload your course material, ask questions, take quizzes and track what you have learned.</p>
+      <div class="auth-steps">
+        <span>Learn</span><i aria-hidden="true">·</i><span>Practice</span><i aria-hidden="true">·</i><span>Grow</span>
+      </div>
+    </section>
+
+    <section class="auth-form">
+      <div class="auth-tabs" role="tablist">
+        <a href="{{ url_for('login_page', next=next) }}" role="tab"
+           class="auth-tab {{ 'on' if mode == 'login' }}">Log in</a>
+        <a href="{{ url_for('signup_page') }}" role="tab"
+           class="auth-tab {{ 'on' if mode == 'signup' }}">Sign up</a>
+      </div>
+
+      {% if error %}
+        <div class="auth-alert" role="alert">{{ error }}</div>
+      {% endif %}
+
+      {% if mode == 'login' %}
+        <h2 class="auth-title">Welcome back</h2>
+        <p class="muted">Log in to continue your learning journey</p>
+
+        <form method="post" action="{{ url_for('login_page') }}" class="auth-fields" novalidate>
+          <input type="hidden" name="next" value="{{ next }}">
+
+          <label class="auth-label">Username or email
+            <span class="auth-input">
+              <input name="login" type="text" autocomplete="username" autofocus
+                     placeholder="Enter your username or email" value="{{ values.get('login', '') }}">
+            </span>
+          </label>
+
+          <label class="auth-label">Password
+            <span class="auth-input">
+              <input name="password" type="password" autocomplete="current-password"
+                     placeholder="Enter your password" data-toggle-pw>
+              <button type="button" class="pw-eye" aria-label="Show password">Show</button>
+            </span>
+          </label>
+
+          <div class="auth-row">
+            <label class="auth-check"><input type="checkbox" name="remember" value="1"> Remember me</label>
+            <button type="button" class="auth-link" data-forgot>Forgot password?</button>
+          </div>
+          <p class="auth-note" data-forgot-note hidden>
+            Password reset is not set up yet. Ask your teacher or the app admin to reset it for you.
+          </p>
+
+          <button type="submit" class="auth-submit">Log in</button>
+        </form>
+
+        <p class="auth-switch">Don't have an account? <a href="{{ url_for('signup_page') }}">Sign up</a></p>
+
+      {% else %}
+        <h2 class="auth-title">Create your account</h2>
+        <p class="muted">Join today and start your learning journey</p>
+
+        <form method="post" action="{{ url_for('signup_page') }}" class="auth-fields" novalidate>
+          <label class="auth-label">Full name
+            <span class="auth-input">
+              <input name="full_name" type="text" autocomplete="name" autofocus
+                     placeholder="Enter your display name" value="{{ values.get('full_name', '') }}">
+            </span>
+          </label>
+
+          <label class="auth-label">Username
+            <span class="auth-input">
+              <input name="username" type="text" autocomplete="username"
+                     placeholder="Choose a username" value="{{ values.get('username', '') }}">
+            </span>
+          </label>
+
+          <label class="auth-label">Email address
+            <span class="auth-input">
+              <input name="email" type="email" autocomplete="email"
+                     placeholder="Enter your email address" value="{{ values.get('email', '') }}">
+            </span>
+          </label>
+
+          <label class="auth-label">Password
+            <span class="auth-input">
+              <input name="password" type="password" autocomplete="new-password"
+                     placeholder="Create a password" id="new-password" data-toggle-pw>
+              <button type="button" class="pw-eye" aria-label="Show password">Show</button>
+            </span>
+          </label>
+
+          <ul class="pw-rules">
+            <li id="rule-len">At least 8 characters</li>
+            <li id="rule-upper">1 uppercase letter</li>
+            <li id="rule-num">1 number</li>
+          </ul>
+
+          <button type="submit" class="auth-submit">Sign up</button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a href="{{ url_for('login_page') }}">Log in</a></p>
+      {% endif %}
+    </section>
+
+  </div>
+</main>
+
+<script>
+  // Show or hide the password.
+  document.querySelectorAll('.pw-eye').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = btn.parentElement.querySelector('input');
+      var show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.textContent = show ? 'Hide' : 'Show';
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+  });
+
+  // Live password checklist on sign-up (same rules as the server).
+  var pw = document.getElementById('new-password');
+  if (pw) {
+    pw.addEventListener('input', function () {
+      var v = pw.value;
+      document.getElementById('rule-len').classList.toggle('ok', v.length >= 8);
+      document.getElementById('rule-upper').classList.toggle('ok', /[A-Z]/.test(v));
+      document.getElementById('rule-num').classList.toggle('ok', /\d/.test(v));
+    });
+  }
+
+  // Forgot password note (no email reset yet).
+  var forgot = document.querySelector('[data-forgot]');
+  if (forgot) {
+    forgot.addEventListener('click', function () {
+      document.querySelector('[data-forgot-note]').hidden = false;
+    });
+  }
+
+  // Disable the button while the form is sending, so it is not clicked twice.
+  document.querySelectorAll('.auth-fields').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      var btn = form.querySelector('.auth-submit');
+      btn.disabled = true;
+      btn.textContent = 'Please wait...';
+    });
+  });
+</script>
+</body>
+</html>

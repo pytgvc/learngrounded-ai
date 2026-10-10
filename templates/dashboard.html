@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid3">
+  <div class="stat big"><b>{{ stats.units }}</b><span>source units</span></div>
+  <div class="stat big"><b>{{ stats.documents|length }}</b><span>documents</span></div>
+  <div class="stat big"><b>{{ report.weak_topics|length }}</b><span>weak topics</span></div>
+</section>
+
+<section class="grid2">
+  <div class="card">
+    <h2>Mastery</h2>
+    {% if charts.mastery %}
+      <img class="chart" src="data:image/png;base64,{{ charts.mastery }}" alt="Mastery by topic">
+    {% else %}
+      <p class="muted">No mastery data yet. Take a quiz or a diagnostic first.</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h2>Accuracy</h2>
+    {% if charts.accuracy %}
+      <img class="chart" src="data:image/png;base64,{{ charts.accuracy }}" alt="Accuracy">
+    {% else %}
+      <p class="muted">No answers yet.</p>
+    {% endif %}
+    <h3>Next best steps</h3>
+    {% if report.weak_topics %}
+      <ul class="list">
+      {% for w in report.weak_topics %}
+        <li><b>{{ w.topic }}</b> · mastery {{ (w.p_known*100)|round|int }}%. Revise this first.</li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No weak topics detected yet.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="card">
+  <h2>Likely misconceptions</h2>
+  {% if report.misconceptions %}
+    <div class="miscs">
+    {% for m in report.misconceptions %}
+      <div class="misc">
+        <b>{{ m.topic }}</b>
+        <p>{{ m.text }}</p>
+        <small>Revisit: {{ m.revisit }}</small>
+      </div>
+    {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">Wrong answers will show up here with where to revisit them.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+# Secrets: never commit API keys or .env files
+.env
+*.key
+
+# Your private data: uploaded files, figures, and the progress database
+uploads/
+data/
+*.db
+
+# Python and system files
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+
+# Zip archives
+*.zip

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>System evaluation</h2>
+  <p class="muted">Runs retrieval and grounding metrics on a test set built from your material, plus simulated
+     students across several sessions. Every number here is reproducible.</p>
+  <div class="row">
+    <button class="primary" id="runEval">Run evaluation</button>
+    <span id="evalStatus" class="muted"></span>
+  </div>
+</section>
+
+<section class="grid2" id="results">
+  <div class="card">
+    <h2>Retrieval and grounding</h2>
+    {% set r = last_eval %}
+    {% if r %}
+      <table class="metrics">
+        <tr><th>Test questions</th><td>{{ r.test_questions }}</td></tr>
+        <tr><th>Faithfulness</th><td>{{ r.faithfulness }}</td></tr>
+        <tr><th>Answer relevancy</th><td>{{ r.answer_relevancy }}</td></tr>
+        <tr><th>Context precision @3</th><td>{{ r.context_precision_at_3 }}</td></tr>
+        <tr><th>Context recall @3</th><td>{{ r.context_recall_at_3 }}</td></tr>
+        <tr><th>Refusal accuracy (off-material)</th><td>{{ r.refusal_accuracy }}</td></tr>
+      </table>
+      <p class="muted small">{{ r.note }}</p>
+    {% else %}
+      <p class="muted">Not run yet.</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h2>Personalization (simulated students)</h2>
+    {% if last_sim and last_sim.profiles %}
+      <table class="metrics">
+        <tr><th>Profile</th><th>Policy</th><th>Mastery gain</th><th>Repetition</th></tr>
+        {% for name, pols in last_sim.profiles.items() %}
+          {% for pol, v in pols.items() %}
+          <tr>
+            <td>{{ name }}</td><td>{{ pol }}</td>
+            <td>{{ v.mastery_gain }}</td><td>{{ (v.repetition_rate*100)|round|int }}%</td>
+          </tr>
+          {% endfor %}
+        {% endfor %}
+      </table>
+      <p class="muted small">{{ last_sim.note }} Adaptive should show higher gain and lower repetition than random.</p>
+    {% else %}
+      <p class="muted">Not run yet.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>initEval();</script>
+{% endblock %}

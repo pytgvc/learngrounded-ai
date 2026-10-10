@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Study from your own material, with proof for every answer.</h1>
+  <p>Upload lecture videos (captions), textbooks (PDF), and slide decks (PPTX). LearnGrounded AI
+     builds a source-cited knowledge base, tutors you only from it, and tracks what you have mastered.</p>
+</section>
+
+<section class="grid2">
+  <div class="card">
+    <h2>1. Add your material</h2>
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" multiple accept=".pdf,.pptx,.vtt,.srt,.txt,.md,.png,.jpg,.jpeg,.webp">
+      <p>Drop PDFs, PPTX slides, or .vtt/.srt lecture captions here</p>
+      <small>or click to choose files</small>
+    </div>
+    <div class="figstatus" id="figStatus">
+      {% if stats.llm_ready %}
+        <span class="ok">Gemini key detected.</span>
+      {% else %}
+        <span class="warn">No GEMINI_API_KEY set. Figures are saved but not described yet.</span>
+      {% endif %}
+      <span>Figures: <b id="figDone">{{ stats.figures.done }}</b> described,
+        <b id="figPending">{{ stats.figures.pending }}</b> waiting.</span>
+      <button id="figBtn" {% if not stats.llm_ready or not stats.figures.pending %}disabled{% endif %}>Describe figures with Gemini</button>
+    </div>
+    <div class="row">
+      <button class="primary" id="uploadBtn">Ingest files</button>
+      <button id="sampleBtn">Load sample course</button>
+      <button class="ghost" id="resetBtn">Clear knowledge base</button>
+    </div>
+    <div id="ingestLog" class="log"></div>
+  </div>
+
+  <div class="card">
+    <h2>Knowledge base</h2>
+    <div class="stats">
+      <div><b id="sDocs">{{ stats.documents|length }}</b><span>documents</span></div>
+      <div><b id="sUnits">{{ stats.units }}</b><span>source units</span></div>
+      <div><b id="sTopics">{{ stats.topics|length }}</b><span>topics</span></div>
+    </div>
+    <div class="chips" id="docChips">
+      {% for d in stats.documents %}
+        <span class="chip">{{ d.name }} · {{ d.units }} units</span>
+      {% else %}
+        <p class="muted">Nothing ingested yet. Load the sample course to try it instantly.</p>
+      {% endfor %}
+    </div>
+    {% if stats.topics %}
+    <h3>Detected topics</h3>
+    <div class="chips">{% for t in stats.topics[:24] %}<span class="chip soft">{{ t }}</span>{% endfor %}</div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="card">
+  <h2>How it works</h2>
+  <div class="steps">
+    <div><span>1</span><h4>Ingest</h4><p>Each page, slide, or caption window becomes a unit linked to its origin.</p></div>
+    <div><span>2</span><h4>Ground</h4><p>Answers quote the exact page, slide, or timestamp. Off-material questions are declined.</p></div>
+    <div><span>3</span><h4>Assess</h4><p>Quizzes are tagged by topic, source, and difficulty, and checked before use.</p></div>
+    <div><span>4</span><h4>Adapt</h4><p>Mastery updates after every answer. Weak topics come first next time.</p></div>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <a class="btnlink primary" href="/chat">Start tutoring</a>
+    <a class="btnlink" href="/quiz">Take a quiz</a>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>initHome(); initFigures();</script>
+{% endblock %}
